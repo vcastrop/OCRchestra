@@ -1,0 +1,7 @@
+streamlit
+easyocr
+pillow
+python-dotenv
+groq
+huggingface_hub
+torch --index-url https://download.pytorch.org/whl/cpu
