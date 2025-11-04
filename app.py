@@ -211,8 +211,6 @@ def get_hf_client():
     return InferenceClient(api_key=HF_KEY)
 
 HF_DEFAULT_MODELS = [
-    "HuggingFaceH4/zephyr-7b-beta",
-    "mistralai/Mistral-7B-Instruct-v0.3",
     "google/gemma-2-9b-it",
     "Qwen/Qwen2.5-7B-Instruct",
 ]
