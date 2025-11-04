@@ -10,6 +10,15 @@ from dotenv import load_dotenv
 st.set_page_config(page_title="OCRchestra", page_icon="🎼", layout="wide")
 load_dotenv()
 
+def get_secret(name: str, default: str = "") -> str:
+    try:
+        if "secrets" in dir(st) and name in st.secrets:
+            return str(st.secrets[name])
+    except Exception:
+        pass
+    return os.getenv(name, default)
+
+
 # ================== STATE ==================
 if "ocr_text" not in st.session_state:
     st.session_state["ocr_text"] = ""
@@ -93,7 +102,13 @@ def clean_output(text: str) -> str:
     return text
 
 def has_key(name: str) -> bool:
+    try:
+        if "secrets" in dir(st) and name in st.secrets:
+            return bool(str(st.secrets[name]).strip())
+    except Exception:
+        pass
     return bool(os.getenv(name, "").strip())
+
 
 def provider_options() -> list:
     opts = []
@@ -155,7 +170,7 @@ def build_prompt(task_key: str, user_text: str) -> str:
     return f"{system}\n\n---\nTexto del usuario:\n{user_text}"
 
 # ================== GROQ ==================
-GROQ_KEY = os.getenv("GROQ_API_KEY", "")
+GROQ_KEY = get_secret("GROQ_API_KEY")
 @st.cache_resource(show_spinner=False)
 def get_groq_client():
     from groq import Groq
@@ -188,7 +203,7 @@ def call_groq(model: str, task: str, user_text: str, temperature: float, max_tok
     return clean_output(out)
 
 # ================== HUGGING FACE ==================
-HF_KEY = os.getenv("HUGGINGFACE_API_KEY", "") or os.getenv("HuggingFace_API_KEY", "")
+HF_KEY   = get_secret("HUGGINGFACE_API_KEY") or get_secret("HuggingFace_API_KEY")
 @st.cache_resource(show_spinner=False)
 def get_hf_client():
     if not HF_KEY: return None
